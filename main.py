@@ -61,7 +61,7 @@ def main():
         # drawing the player
         p1.draw(WIN)
         
-        # drawing the enemie
+        # drawing the meteor
         meteor.draw(WIN)
         pygame.display.update()
 
