@@ -1,2 +1,2 @@
-# choco_rocket
+# choco-rocket
 Repo with the PyGame ChocoRocket project.
