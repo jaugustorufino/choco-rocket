@@ -11,7 +11,7 @@ class Enemies:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load('meteor.png'), (80, 55))
+        self.image = pygame.transform.scale(pygame.image.load('images/meteor.png'), (80, 55))
 
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
@@ -21,7 +21,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load('p1.png'), (70, 80))
+        self.image = pygame.transform.scale(pygame.image.load('images/p1.png'), (70, 80))
 
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
@@ -36,7 +36,7 @@ def main():
     pygame.display.set_caption("ChocoRocket")
 
     # Background
-    BG = pygame.transform.scale(pygame.image.load("bg.png"), (WIDTH, HEIGHT))
+    BG = pygame.transform.scale(pygame.image.load("images/bg.png"), (WIDTH, HEIGHT))
 
     clock = pygame.time.Clock()
     lives = 3
