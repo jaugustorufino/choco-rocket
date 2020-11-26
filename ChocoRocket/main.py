@@ -43,7 +43,7 @@ def main():
     pygame.display.set_caption("ChocoRocket")
 
     # Background
-    BG = pygame.transform.scale(pygame.image.load("images/bg.png"), (WIDTH, HEIGHT))
+    BG = load_img("bg.png", WIDTH, HEIGHT)
 
     clock = pygame.time.Clock()
     lives = 3
