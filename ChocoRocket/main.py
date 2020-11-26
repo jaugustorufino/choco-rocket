@@ -2,16 +2,23 @@
 
 import pygame
 import sys
+import os
 import random
+import time
 from pygame.locals import *
 
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+
+def load_img(name, w, h):
+   path = os.path.join(main_dir,"images",name)
+   return pygame.transform.scale(pygame.image.load(path), (w,h))
 
 class Enemies:
     
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load('images/meteor.png'), (80, 55))
+        self.image = load_img('meteor.png', 80, 55)
 
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
@@ -21,7 +28,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load('images/p1.png'), (70, 80))
+        self.image = load_img('p1.png', 70, 80)
 
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
@@ -42,12 +49,15 @@ def main():
     lives = 3
     score = 0
     font = pygame.font.SysFont("comicsans", 40)
-    
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    game_over = font.render("Game Over!", True, WHITE)
+
     x, y = 0, 200 
-    vel = 5
+    vel = 4.5
     vel_meteor = 4
-    p1 = Player(0, 200)
-    meteor = Enemies(660, random.randint(10, 200))
+    player = Player(x, y)
+    meteor = Enemies(660, random.randint(15, 345))
 
     def redraw_window():
         WIN.blit(BG, (0, 0))
@@ -59,12 +69,21 @@ def main():
         WIN.blit(score_label, (WIDTH - score_label.get_width() - 10, 10))
 
         # drawing the player
-        p1.draw(WIN)
+        player.draw(WIN)
         
         # drawing the meteor
         meteor.draw(WIN)
+
         pygame.display.update()
 
+    def colision():
+        # check for vertical collision
+        if meteor.x <= (player.x+70):
+            # check for horizontal collision
+            if 0 < (player.y - meteor.y) < 50 or 0 < (meteor.y - player.y) < 80:
+                return True
+
+        return False
 
     # Game loop
     while True:
@@ -78,20 +97,36 @@ def main():
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and p1.y - vel > 20:
-            p1.y -= vel
-        if keys[pygame.K_DOWN] and p1.y + vel + 80 < HEIGHT:
-            p1.y += vel
+        if keys[pygame.K_UP] and player.y - vel > 20:
+            player.y -= vel
+        if keys[pygame.K_DOWN] and player.y + vel + 80 < HEIGHT:
+            player.y += vel
         
         meteor.x -= vel_meteor
 
-        if meteor.x == p1.x or meteor.x < p1.x:
+        if meteor.x == player.x or meteor.x < player.x:
+            # check for collision
+            if colision():
+                lives -= 1
+
             meteor.y = random.randint(32, 400-55)
             meteor.x = 660
             score += 1
             vel_meteor +=  0.5
             if vel_meteor > 12:
                 vel_meteor = 12
+
+        if lives == 0:
+            time.sleep(1)
+
+            WIN.fill(BLACK)
+            WIN.blit(game_over, (260,180))
+            pygame.display.update()
+
+            time.sleep(2)
+            
+            pygame.quit()
+            sys.exit()
 
 
 if __name__ == "__main__":
