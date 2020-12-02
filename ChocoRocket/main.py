@@ -33,6 +33,17 @@ class Player:
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
 
+class Chocolate:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = load_img('choco.png', 50, 50)
+
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
+
+
 def main():
     pygame.init()
     pygame.font.init()
@@ -54,10 +65,12 @@ def main():
     game_over = font.render("Game Over!", True, WHITE)
 
     x, y = 0, 200 
-    vel = 4.5
-    vel_meteor = 4
     player = Player(x, y)
     meteor = Enemies(660, random.randint(15, 345))
+    choco = Chocolate(660, random.randint(15, 345))
+    vel = 4.5
+    vel_meteor = 4.5
+    vel_choco = 4
 
     def redraw_window():
         WIN.blit(BG, (0, 0))
@@ -74,13 +87,17 @@ def main():
         # drawing the meteor
         meteor.draw(WIN)
 
+        # drawing the chocolate
+        choco.draw(WIN)
+
+
         pygame.display.update()
 
-    def colision():
+    def colision(name_object):
         # check for vertical collision
-        if meteor.x <= (player.x+70):
+        if name_object.x <= (player.x+70):
             # check for horizontal collision
-            if 0 < (player.y - meteor.y) < 50 or 0 < (meteor.y - player.y) < 80:
+            if 0 < (player.y - name_object.y) < 50 or 0 < (name_object.y - player.y) < 80:
                 return True
 
         return False
@@ -89,6 +106,8 @@ def main():
     while True:
         clock.tick(60)
         redraw_window()
+
+        score_label = font.render(f"Score: {score}", 1, (255, 255, 255))
         
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -103,24 +122,41 @@ def main():
             player.y += vel
         
         meteor.x -= vel_meteor
+        choco.x -= vel_choco
 
+        # Meteor
         if meteor.x == player.x or meteor.x < player.x:
+            
             # check for collision
-            if colision():
+            if colision(meteor):
                 lives -= 1
 
             meteor.y = random.randint(32, 400-55)
             meteor.x = 660
-            score += 1
-            vel_meteor +=  0.5
-            if vel_meteor > 12:
-                vel_meteor = 12
+            vel_meteor +=  0.30
+            if vel_meteor > 14:
+                vel_meteor = 14
+
+        # Chocolate
+        if choco.x == player.x or choco.x < player.x:
+
+            #check for collision
+            if colision(choco):
+                score += 1
+
+            choco.y = random.randint(32, 400-50)
+            choco.x = 660
+            vel_choco += 0.25
+
+            if vel_choco > 12:
+                vel_choco = 12
 
         if lives == 0:
             time.sleep(1)
 
             WIN.fill(BLACK)
             WIN.blit(game_over, (260,180))
+            WIN.blit(score_label, (260,140))
             pygame.display.update()
 
             time.sleep(2)
