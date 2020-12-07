@@ -4,7 +4,36 @@ import os
 import random
 import time
 from pygame.locals import *
-from model import Enemies, Player, Chocolate
+
+class Enemies:
+    
+    def __init__(self, x, y, image):
+        self.x = x
+        self.y = y
+        self.image = image
+
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
+
+class Player:
+    
+    def __init__(self, x, y, image):
+        self.x = x
+        self.y = y
+        self.image = image
+
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
+
+class Chocolate:
+
+    def __init__(self, x, y, image):
+        self.x = x
+        self.y = y
+        self.image = image
+
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
 
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
@@ -12,6 +41,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 def load_img(name, w, h):
    path = os.path.join(main_dir,"images",name)
    return pygame.transform.scale(pygame.image.load(path), (w,h))
+
 
 def main():
     pygame.init()
@@ -69,6 +99,7 @@ def main():
             start = font_small.render(f"< {msg} >", True, WHITE)
             WIN.blit(start, (x, y))
 
+
     def game_intro():
 
         intro = True
@@ -113,6 +144,7 @@ def main():
 
         pygame.display.update()
 
+
     def colision(name_object):
         # check for vertical collision
         if name_object.x <= (player.x+70):
@@ -121,6 +153,7 @@ def main():
                 return True
 
         return False
+
 
     def game_loop():
         lives = 3
