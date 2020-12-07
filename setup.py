@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="choco-rocket",
-    version="0.1.1",
+    version="0.1.2",
     author="Jose Augusto O. Rufino",
     author_email="joseaorufino@gmail.com",
     description="Game's type is Arcade.",
