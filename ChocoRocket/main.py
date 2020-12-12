@@ -5,7 +5,7 @@ import random
 import time
 from pygame.locals import *
 
-class Enemies:
+class Meteor:
     
     def __init__(self, x, y, image):
         self.x = x
@@ -56,7 +56,7 @@ def main():
     BG = load_img("bg.png", WIDTH, HEIGHT)
 
     clock = pygame.time.Clock()
-    
+
     font = pygame.font.SysFont("comicsans", 40)
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -64,13 +64,15 @@ def main():
 
     x, y = 0, 200 
     player = Player(x, y, load_img('p1.png', 70, 80))
-    meteor = Enemies(660, random.randint(15, 345), load_img('meteor.png', 80, 55))
+    meteor = Meteor(660, random.randint(15, 345), load_img('meteor.png', 80, 55))
     choco = Chocolate(660, random.randint(15, 345), load_img('choco.png', 50, 50))
 
-    def button(msg,x,y,w,h,action=None):
+    pause = False
 
+    def button(msg,x,y,w,h,action=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        keys = pygame.key.get_pressed()
 
         font_small = pygame.font.SysFont('courier', 35)
             
@@ -94,10 +96,71 @@ def main():
                     choco.x, choco.y = 660, random.randint(15, 345)
                     game_loop()
 
-        
+                elif action == 'credits':
+                    global run
+                    run = True
+
+                    while run:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                                quit()
+
+                        WIN.fill(BLACK)
+                        new_font = pygame.font.SysFont("courier", 60)
+                        title = new_font.render("ChocoRocket", True, RED)
+                        msg_font = pygame.font.SysFont("courier", 25)
+                        msg = msg_font.render("This Game is a college project made by:", True, WHITE)
+                        name = msg_font.render("- Jose Augusto Oliveira Rufino -", True, WHITE)
+                        WIN.blit(msg, (55, 150))
+                        WIN.blit(name, (90, 210))
+                        WIN.blit(title, (165, 0))
+
+
+                        button("Return", 250, 350, 200, 40,'return')
+                
+                        pygame.display.update()
+                        clock.tick(15)
+
+                elif action == 'return':
+                    run = False
+
+                elif action == 'continue':
+                    unpause()
+
+                # elif action == 'menu':
+                #     global intro
+                #     intro = True
+                    
+
         else:
-            start = font_small.render(f"< {msg} >", True, WHITE)
-            WIN.blit(start, (x, y))
+            message = font_small.render(f"< {msg} >", True, WHITE)
+            WIN.blit(message, (x, y))
+
+    def unpause():
+        global pause
+        pause = False
+
+    def paused():
+        global pause
+        pause = True
+
+        while pause:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            WIN.fill(BLACK)
+            pause_font = pygame.font.SysFont("courier", 60)
+            pause_title = pause_font.render("Paused", True, WHITE)
+            WIN.blit(pause_title, (230, 30))
+
+            button("Continue", 250, 150, 200, 40, 'continue')
+            button("Quit", 250, 210, 200, 40, 'quit')
+
+            pygame.display.update()
+            clock.tick(15)
 
 
     def game_intro():
@@ -111,8 +174,8 @@ def main():
                     quit()
 
             WIN.fill(BLACK)
-            font_intro = pygame.font.SysFont("courier", 60)
-            title = font_intro.render("ChocoRocket", True, RED)
+            new_font = pygame.font.SysFont("courier", 60)
+            title = new_font.render("ChocoRocket", True, RED)
             WIN.blit(title, (165, 0))
 
             button("Start", 250, 150, 200, 40,'play')
@@ -144,7 +207,6 @@ def main():
 
         pygame.display.update()
 
-
     def colision(name_object):
         # check for vertical collision
         if name_object.x <= (player.x+70):
@@ -153,7 +215,6 @@ def main():
                 return True
 
         return False
-
 
     def game_loop():
         lives = 3
@@ -179,9 +240,13 @@ def main():
 
             if keys[pygame.K_UP] and player.y - vel > 20:
                 player.y -= vel
+
             if keys[pygame.K_DOWN] and player.y + vel + 80 < HEIGHT:
                 player.y += vel
             
+            if keys[pygame.K_ESCAPE]:
+                paused()
+
             meteor.x -= vel_meteor
             choco.x -= vel_choco
 
@@ -194,20 +259,24 @@ def main():
 
                 meteor.y = random.randint(32, 400-55)
                 meteor.x = 660
-                vel_meteor +=  0.30
+                vel_meteor += 0.25
+
                 if vel_meteor > 14:
                     vel_meteor = 14
 
             # Chocolate
             if choco.x == player.x or choco.x < player.x:
 
-                #check for collision
+                # check for collision
                 if colision(choco):
                     score += 1
+                    # increase player's velocity
+                    if score % 11 == 0:
+                        vel += 0.4
 
                 choco.y = random.randint(32, 400-50)
                 choco.x = 660
-                vel_choco += 0.25
+                vel_choco += 0.2
 
                 if vel_choco > 12:
                     vel_choco = 12
