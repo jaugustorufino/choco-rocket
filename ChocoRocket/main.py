@@ -122,6 +122,33 @@ def main():
                         pygame.display.update()
                         clock.tick(15)
 
+                elif action == 'controls':
+                    run = True
+
+                    while run:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                                quit()
+
+                        WIN.fill(BLACK)
+                        new_font = pygame.font.SysFont("courier", 60)
+                        title = new_font.render("ChocoRocket", True, RED)
+                        msg_font = pygame.font.SysFont("courier", 25)
+                        title_controls = pygame.font.SysFont("courier", 35).render("Controls:", True, WHITE)
+                        msg1 = msg_font.render("- Arrows: UP and DOWN", True, WHITE)
+                        msg2 = msg_font.render("- ESC (PAUSE)", True, WHITE)
+                        WIN.blit(title_controls, (260, 100))
+                        WIN.blit(msg1, (200, 210))
+                        WIN.blit(msg2, (200, 240))
+                        WIN.blit(title, (165, 0))
+
+
+                        button("Return", 250, 350, 200, 40,'return')
+                
+                        pygame.display.update()
+                        clock.tick(15)
+
                 elif action == 'return':
                     run = False
 
@@ -177,10 +204,14 @@ def main():
             new_font = pygame.font.SysFont("courier", 60)
             title = new_font.render("ChocoRocket", True, RED)
             WIN.blit(title, (165, 0))
+            px, py = 110, 55
+            WIN.blit(load_img('p1.png', 70, 80), (px, py))
+            WIN.blit(load_img('p1.png', 70, 80), (px+420, py))
 
-            button("Start", 250, 150, 200, 40,'play')
-            button("Credits", 250, 210, 200, 40,'credits')
-            button("Quit", 250, 270, 200, 40,'quit')
+            button("Start", 250, 130, 200, 40,'play')
+            button("Controls", 250, 130+60, 200, 40, 'controls')
+            button("Credits", 250, 130+60*2, 200, 40,'credits')
+            button("Quit", 250, 130+60*3, 200, 40,'quit')
 
             pygame.display.update()
             clock.tick(15)
