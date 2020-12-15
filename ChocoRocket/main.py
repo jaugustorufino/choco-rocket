@@ -136,7 +136,7 @@ def main():
                         title = new_font.render("ChocoRocket", True, RED)
                         msg_font = pygame.font.SysFont("courier", 25)
                         title_controls = pygame.font.SysFont("courier", 35).render("Controls:", True, WHITE)
-                        msg1 = msg_font.render("- Arrows: UP and DOWN", True, WHITE)
+                        msg1 = msg_font.render("- Arrows", True, WHITE)
                         msg2 = msg_font.render("- ESC (PAUSE)", True, WHITE)
                         WIN.blit(title_controls, (260, 100))
                         WIN.blit(msg1, (200, 210))
@@ -240,7 +240,7 @@ def main():
 
     def colision(name_object):
         # check for vertical collision
-        if name_object.x <= (player.x+70):
+        if player.x <= name_object.x <= (player.x+40):
             # check for horizontal collision
             if 0 < (player.y - name_object.y) < 50 or 0 < (name_object.y - player.y) < 80:
                 return True
@@ -272,6 +272,12 @@ def main():
             if keys[pygame.K_UP] and player.y - vel > 20:
                 player.y -= vel
 
+            if keys[pygame.K_RIGHT] and player.x + vel + 70 < WIDTH:
+                player.x += vel
+
+            if keys[pygame.K_LEFT] and player.x - vel > 0:
+                player.x -= vel
+
             if keys[pygame.K_DOWN] and player.y + vel + 80 < HEIGHT:
                 player.y += vel
             
@@ -282,7 +288,7 @@ def main():
             choco.x -= vel_choco
 
             # Meteor
-            if meteor.x == player.x or meteor.x < player.x:
+            if meteor.x <= 10 or colision(meteor):
                 
                 # check for collision
                 if colision(meteor):
@@ -296,11 +302,12 @@ def main():
                     vel_meteor = 14
 
             # Chocolate
-            if choco.x == player.x or choco.x < player.x:
+            if choco.x <= 10 or colision(choco):
 
                 # check for collision
                 if colision(choco):
                     score += 1
+
                     # increase player's velocity
                     if score % 11 == 0:
                         vel += 0.4
